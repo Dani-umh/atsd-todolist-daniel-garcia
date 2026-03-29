@@ -2,16 +2,31 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments :: head (titulo='Acerca de')"></head>
 <body>
+
+<th:block th:if="${usuario != null}">
+    <div th:replace="fragments :: navbar (usuario=${usuario})"></div>
+</th:block>
+
 <div class="container-fluid">
-    <div class="container-fluid">
-        <h1>ToDoList</h1>
-        <ul>
-            <li>Developed by DANIEL GARCIA </li>
-            <li>Version 1.0.1</li>
-            <li>Release date: 20/03/2026</li>
-        </ul>
+
+    <div class="row mt-3">
+        <div class="col">
+            <div th:if="${usuario == null}">
+                <a class="btn btn-link pl-0" href="/login">Login</a>
+                <a class="btn btn-link" href="/registro">Registration</a>
+            </div>
+
+            <h1>ToDoList</h1>
+            <ul>
+                <li>Developed by DANIEL GARCIA</li>
+                <li>Version 1.0.1</li>
+                <li>Release date: 20/03/2026</li>
+            </ul>
+        </div>
     </div>
+
 </div>
-<div th:replace="fragments::javascript"/>
+
+<div th:replace="fragments::javascript"></div>
 </body>
 </html>
