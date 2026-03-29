@@ -4,6 +4,9 @@
 <head th:replace="fragments :: head (titulo='Login')"></head>
 
 <body>
+
+<div th:replace="fragments :: navbar (usuario=${usuario})"></div>
+
 <div class="container-fluid">
 
     <h2 th:text="'Nueva tarea para el usuario ' + ${usuario.getNombre()}"></h2>
