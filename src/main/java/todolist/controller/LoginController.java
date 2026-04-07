@@ -92,4 +92,19 @@ public class LoginController {
         managerUserSession.logout();
         return "redirect:/login";
    }
+
+    @GetMapping("/registered")
+    public String registeredUsers(Model model) {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        UsuarioData usuario = null;
+
+        if (idUsuarioLogeado != null) {
+            usuario = usuarioService.findById(idUsuarioLogeado);
+        }
+
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarios", usuarioService.allUsuarios());
+
+        return "listaUsuarios";
+    }
 }
