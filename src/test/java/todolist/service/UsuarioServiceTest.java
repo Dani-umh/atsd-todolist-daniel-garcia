@@ -118,4 +118,16 @@ public class UsuarioServiceTest {
                 .extracting(UsuarioData::getEmail)
                 .contains("richard@umh.es", "ada@umh.es");
     }
+
+    @Test
+    public void servicioConsultaUsuarioPorIdDevuelveUsuarioCorrecto() {
+        Long usuarioId = addUsuarioBD();
+
+        UsuarioData usuario = usuarioService.findById(usuarioId);
+
+        assertThat(usuario).isNotNull();
+        assertThat(usuario.getId()).isEqualTo(usuarioId);
+        assertThat(usuario.getEmail()).isEqualTo("richard@umh.es");
+        assertThat(usuario.getNombre()).isEqualTo("Richard Stallman");
+    }
 }
