@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='User description')"></head>
+
+<body>
+
+<th:block th:if="${usuario != null}">
+  <div th:replace="fragments :: navbar (usuario=${usuario})"></div>
+</th:block>
+
+<div class="container-fluid">
+
+  <div class="row mt-3">
+    <div class="col">
+      <h2>User description</h2>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col">
+      <table class="table table-striped">
+        <tbody>
+        <tr>
+          <th>Identifier</th>
+          <td th:text="${usuarioDescripcion.id}"></td>
+        </tr>
+        <tr>
+          <th>Email</th>
+          <td th:text="${usuarioDescripcion.email}"></td>
+        </tr>
+        <tr>
+          <th>Name</th>
+          <td th:text="${usuarioDescripcion.nombre}"></td>
+        </tr>
+        <tr>
+          <th>Birth date</th>
+          <td th:text="${usuarioDescripcion.fechaNacimiento}"></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div th:replace="fragments :: javascript"></div>
+
+</body>
+</html>
