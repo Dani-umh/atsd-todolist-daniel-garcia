@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.springframework.web.bind.annotation.PathVariable;
+
 @Controller
 public class LoginController {
 
@@ -106,5 +108,22 @@ public class LoginController {
         model.addAttribute("usuarios", usuarioService.allUsuarios());
 
         return "listaUsuarios";
+    }
+
+    @GetMapping("/registered/{id}")
+    public String registeredUserDescription(@PathVariable Long id, Model model) {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        UsuarioData usuario = null;
+
+        if (idUsuarioLogeado != null) {
+            usuario = usuarioService.findById(idUsuarioLogeado);
+        }
+
+        UsuarioData usuarioDescripcion = usuarioService.findById(id);
+
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarioDescripcion", usuarioDescripcion);
+
+        return "descripcionUsuario";
     }
 }

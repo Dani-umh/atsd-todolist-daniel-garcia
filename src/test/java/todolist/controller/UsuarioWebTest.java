@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.not;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -89,5 +90,27 @@ public class UsuarioWebTest {
                         containsString("1"),
                         containsString("2")
                 )));
+    }
+
+    @Test
+    public void descripcionUsuarioDevuelvePaginaConDatosUsuarioSinPassword() throws Exception {
+        UsuarioData usuario = new UsuarioData();
+        usuario.setId(1L);
+        usuario.setEmail("richard@umh.es");
+        usuario.setNombre("Richard Stallman");
+        usuario.setPassword("1234");
+
+        when(usuarioService.findById(1L))
+                .thenReturn(usuario);
+
+        this.mockMvc.perform(get("/registered/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(allOf(
+                        containsString("User description"),
+                        containsString("1"),
+                        containsString("richard@umh.es"),
+                        containsString("Richard Stallman")
+                )))
+                .andExpect(content().string(not(containsString("1234"))));
     }
 }
