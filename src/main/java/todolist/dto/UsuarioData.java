@@ -12,6 +12,7 @@ public class UsuarioData {
     private String password;
     private Date fechaNacimiento;
     private boolean admin;
+    private boolean enabled;
 
     // Getters y setters
 
@@ -39,9 +40,13 @@ public class UsuarioData {
         this.nombre = nombre;
     }
 
-    public void setPassword(String password) { this.password = password; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-    public String getPassword() { return password; }
+    public String getPassword() {
+        return password;
+    }
 
     public Date getFechaNacimiento() {
         return fechaNacimiento;
@@ -51,9 +56,21 @@ public class UsuarioData {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public boolean isAdmin() { return admin; }
+    public boolean isAdmin() {
+        return admin;
+    }
 
-    public void setAdmin(boolean admin) { this.admin = admin; }
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     // Sobreescribimos equals y hashCode para que dos usuarios sean iguales
     // si tienen el mismo ID (ignoramos el resto de atributos)
