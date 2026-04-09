@@ -142,4 +142,11 @@ public class LoginController {
 
         return "descripcionUsuario";
     }
+
+    @PostMapping("/registered/{id}/toggle-enabled")
+    public String toggleEnabledUser(@PathVariable Long id) {
+        comprobarAdministradorLogeado();
+        usuarioService.toggleEnabledUsuario(id);
+        return "redirect:/registered";
+    }
 }
