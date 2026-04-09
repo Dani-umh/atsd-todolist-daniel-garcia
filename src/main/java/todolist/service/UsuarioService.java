@@ -20,7 +20,7 @@ public class UsuarioService {
 
     Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
-    public enum LoginStatus {LOGIN_OK, USER_NOT_FOUND, ERROR_PASSWORD}
+    public enum LoginStatus {LOGIN_OK, USER_NOT_FOUND, ERROR_PASSWORD, USER_DISABLED}
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -32,6 +32,8 @@ public class UsuarioService {
         Optional<Usuario> usuario = usuarioRepository.findByEmail(eMail);
         if (!usuario.isPresent()) {
             return LoginStatus.USER_NOT_FOUND;
+        } else if (!usuario.get().isEnabled()) {
+            return LoginStatus.USER_DISABLED;
         } else if (!usuario.get().getPassword().equals(password)) {
             return LoginStatus.ERROR_PASSWORD;
         } else {
@@ -53,6 +55,7 @@ public class UsuarioService {
             throw new UsuarioServiceException("El usuario no tiene password");
         else {
             Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
+            usuarioNuevo.setEnabled(true);
             usuarioNuevo = usuarioRepository.save(usuarioNuevo);
             return modelMapper.map(usuarioNuevo, UsuarioData.class);
         }
@@ -88,5 +91,20 @@ public class UsuarioService {
         return StreamSupport.stream(usuarioRepository.findAll().spliterator(), false)
                 .map(usuario -> modelMapper.map(usuario, UsuarioData.class))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public UsuarioData toggleEnabledUsuario(Long usuarioId) {
+        logger.debug("Cambiando estado enabled del usuario " + usuarioId);
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+
+        if (usuario == null) {
+            throw new UsuarioServiceException("El usuario " + usuarioId + " no existe");
+        }
+
+        usuario.setEnabled(!usuario.isEnabled());
+        usuario = usuarioRepository.save(usuario);
+
+        return modelMapper.map(usuario, UsuarioData.class);
     }
 }

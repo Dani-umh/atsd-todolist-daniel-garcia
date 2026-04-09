@@ -76,6 +76,9 @@ public class LoginController {
         } else if (loginStatus == UsuarioService.LoginStatus.ERROR_PASSWORD) {
             model.addAttribute("error", "Contraseña incorrecta");
             return "formLogin";
+        } else if (loginStatus == UsuarioService.LoginStatus.USER_DISABLED) {
+            model.addAttribute("error", "Usuario deshabilitado");
+            return "formLogin";
         }
         return "formLogin";
     }
@@ -138,5 +141,12 @@ public class LoginController {
         model.addAttribute("usuarioDescripcion", usuarioDescripcion);
 
         return "descripcionUsuario";
+    }
+
+    @PostMapping("/registered/{id}/toggle-enabled")
+    public String toggleEnabledUser(@PathVariable Long id) {
+        comprobarAdministradorLogeado();
+        usuarioService.toggleEnabledUsuario(id);
+        return "redirect:/registered";
     }
 }

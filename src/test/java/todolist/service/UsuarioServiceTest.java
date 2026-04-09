@@ -41,6 +41,17 @@ public class UsuarioServiceTest {
     }
 
     @Test
+    public void servicioLoginUsuarioDeshabilitado() {
+        Long usuarioId = addUsuarioBD();
+
+        usuarioService.toggleEnabledUsuario(usuarioId);
+
+        UsuarioService.LoginStatus loginStatus = usuarioService.login("richard@umh.es", "1234");
+
+        assertThat(loginStatus).isEqualTo(UsuarioService.LoginStatus.USER_DISABLED);
+    }
+
+    @Test
     public void servicioRegistroUsuario() {
         UsuarioData usuario = new UsuarioData();
         usuario.setEmail("usuario.prueba2@gmail.com");
@@ -129,5 +140,19 @@ public class UsuarioServiceTest {
         assertThat(usuario.getId()).isEqualTo(usuarioId);
         assertThat(usuario.getEmail()).isEqualTo("richard@umh.es");
         assertThat(usuario.getNombre()).isEqualTo("Richard Stallman");
+    }
+
+    @Test
+    public void servicioToggleEnabledUsuarioCambiaEstadoDelUsuario() {
+        Long usuarioId = addUsuarioBD();
+
+        UsuarioData usuarioInicial = usuarioService.findById(usuarioId);
+        assertThat(usuarioInicial.isEnabled()).isTrue();
+
+        UsuarioData usuarioDeshabilitado = usuarioService.toggleEnabledUsuario(usuarioId);
+        assertThat(usuarioDeshabilitado.isEnabled()).isFalse();
+
+        UsuarioData usuarioHabilitado = usuarioService.toggleEnabledUsuario(usuarioId);
+        assertThat(usuarioHabilitado.isEnabled()).isTrue();
     }
 }

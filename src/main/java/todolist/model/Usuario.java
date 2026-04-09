@@ -22,6 +22,7 @@ public class Usuario implements Serializable {
     private String nombre;
     private String password;
     private boolean admin;
+    private boolean enabled = true;
     @Column(name = "fecha_nacimiento")
     @Temporal(TemporalType.DATE)
     private Date fechaNacimiento;
@@ -38,6 +39,7 @@ public class Usuario implements Serializable {
     // Constructor público con los atributos obligatorios. En este caso el correo electrónico.
     public Usuario(String email) {
         this.email = email;
+        this.enabled = true;
     }
 
     // Getters y setters atributos básicos
@@ -82,9 +84,21 @@ public class Usuario implements Serializable {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public boolean isAdmin() { return admin; }
+    public boolean isAdmin() {
+        return admin;
+    }
 
-    public void setAdmin(boolean admin) { this.admin = admin; }
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     // Getters y setters de la relación
 
