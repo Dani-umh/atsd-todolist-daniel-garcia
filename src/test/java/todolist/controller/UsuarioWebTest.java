@@ -95,6 +95,17 @@ public class UsuarioWebTest {
     }
 
     @Test
+    public void servicioLoginUsuarioDeshabilitado() throws Exception {
+        when(usuarioService.login("ana.garcia@gmail.com", "12345678"))
+                .thenReturn(UsuarioService.LoginStatus.USER_DISABLED);
+
+        this.mockMvc.perform(post("/login")
+                        .param("eMail", "ana.garcia@gmail.com")
+                        .param("password", "12345678"))
+                .andExpect(content().string(containsString("Usuario deshabilitado")));
+    }
+
+    @Test
     public void listadoUsuariosRegistradosDevuelvePaginaConUsuarios() throws Exception {
         UsuarioData admin = new UsuarioData();
         admin.setId(99L);
@@ -104,10 +115,12 @@ public class UsuarioWebTest {
         UsuarioData usuario1 = new UsuarioData();
         usuario1.setId(1L);
         usuario1.setEmail("richard@umh.es");
+        usuario1.setEnabled(true);
 
         UsuarioData usuario2 = new UsuarioData();
         usuario2.setId(2L);
         usuario2.setEmail("ada@umh.es");
+        usuario2.setEnabled(false);
 
         when(managerUserSession.usuarioLogeado())
                 .thenReturn(99L);
@@ -124,7 +137,9 @@ public class UsuarioWebTest {
                         containsString("richard@umh.es"),
                         containsString("ada@umh.es"),
                         containsString("1"),
-                        containsString("2")
+                        containsString("2"),
+                        containsString("Disable"),
+                        containsString("Enable")
                 )));
     }
 
@@ -160,5 +175,31 @@ public class UsuarioWebTest {
                         containsString("Richard Stallman")
                 )))
                 .andExpect(content().string(not(containsString("1234"))));
+    }
+
+    @Test
+    public void administradorPuedeCambiarEstadoDeAccesoDeUsuario() throws Exception {
+        UsuarioData admin = new UsuarioData();
+        admin.setId(99L);
+        admin.setEmail("admin@umh.es");
+        admin.setAdmin(true);
+
+        UsuarioData usuarioActualizado = new UsuarioData();
+        usuarioActualizado.setId(1L);
+        usuarioActualizado.setEmail("richard@umh.es");
+        usuarioActualizado.setEnabled(false);
+
+        when(managerUserSession.usuarioLogeado())
+                .thenReturn(99L);
+
+        when(usuarioService.findById(99L))
+                .thenReturn(admin);
+
+        when(usuarioService.toggleEnabledUsuario(1L))
+                .thenReturn(usuarioActualizado);
+
+        this.mockMvc.perform(post("/registered/1/toggle-enabled"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/registered"));
     }
 }
