@@ -1,6 +1,7 @@
 package todolist.controller;
 
 import todolist.authentication.ManagerUserSession;
+import todolist.controller.exception.AccesoNoPermitidoException;
 import todolist.dto.LoginData;
 import todolist.dto.RegistroData;
 import todolist.dto.UsuarioData;
@@ -11,12 +12,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class LoginController {
@@ -26,6 +26,22 @@ public class LoginController {
 
     @Autowired
     ManagerUserSession managerUserSession;
+
+    private UsuarioData comprobarAdministradorLogeado() {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+
+        if (idUsuarioLogeado == null) {
+            throw new AccesoNoPermitidoException();
+        }
+
+        UsuarioData usuario = usuarioService.findById(idUsuarioLogeado);
+
+        if (usuario == null || !usuario.isAdmin()) {
+            throw new AccesoNoPermitidoException();
+        }
+
+        return usuario;
+    }
 
     @GetMapping("/")
     public String home(Model model) {
@@ -97,20 +113,15 @@ public class LoginController {
         return "redirect:/login";
     }
 
-   @GetMapping("/logout")
-   public String logout(HttpSession session) {
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
         managerUserSession.logout();
         return "redirect:/login";
-   }
+    }
 
     @GetMapping("/registered")
     public String registeredUsers(Model model) {
-        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
-        UsuarioData usuario = null;
-
-        if (idUsuarioLogeado != null) {
-            usuario = usuarioService.findById(idUsuarioLogeado);
-        }
+        UsuarioData usuario = comprobarAdministradorLogeado();
 
         model.addAttribute("usuario", usuario);
         model.addAttribute("usuarios", usuarioService.allUsuarios());
@@ -120,13 +131,7 @@ public class LoginController {
 
     @GetMapping("/registered/{id}")
     public String registeredUserDescription(@PathVariable Long id, Model model) {
-        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
-        UsuarioData usuario = null;
-
-        if (idUsuarioLogeado != null) {
-            usuario = usuarioService.findById(idUsuarioLogeado);
-        }
-
+        UsuarioData usuario = comprobarAdministradorLogeado();
         UsuarioData usuarioDescripcion = usuarioService.findById(id);
 
         model.addAttribute("usuario", usuario);
