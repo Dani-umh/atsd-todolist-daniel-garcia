@@ -92,4 +92,19 @@ public class UsuarioService {
                 .map(usuario -> modelMapper.map(usuario, UsuarioData.class))
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public UsuarioData toggleEnabledUsuario(Long usuarioId) {
+        logger.debug("Cambiando estado enabled del usuario " + usuarioId);
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+
+        if (usuario == null) {
+            throw new UsuarioServiceException("El usuario " + usuarioId + " no existe");
+        }
+
+        usuario.setEnabled(!usuario.isEnabled());
+        usuario = usuarioRepository.save(usuario);
+
+        return modelMapper.map(usuario, UsuarioData.class);
+    }
 }
