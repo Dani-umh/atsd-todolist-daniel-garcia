@@ -1,5 +1,6 @@
 package todolist.controller;
 
+import todolist.authentication.ManagerUserSession;
 import todolist.dto.UsuarioData;
 import todolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
@@ -13,11 +14,11 @@ import java.util.Arrays;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.hamcrest.Matchers.not;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -29,6 +30,9 @@ public class UsuarioWebTest {
     @MockBean
     private UsuarioService usuarioService;
 
+    @MockBean
+    private ManagerUserSession managerUserSession;
+
     @Test
     public void servicioLoginUsuarioOK() throws Exception {
         UsuarioData anaGarcia = new UsuarioData();
@@ -37,6 +41,7 @@ public class UsuarioWebTest {
 
         when(usuarioService.login("ana.garcia@gmail.com", "12345678"))
                 .thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
+
         when(usuarioService.findByEmail("ana.garcia@gmail.com"))
                 .thenReturn(anaGarcia);
 
@@ -56,6 +61,7 @@ public class UsuarioWebTest {
 
         when(usuarioService.login("admin@admin.com", "1234"))
                 .thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
+
         when(usuarioService.findByEmail("admin@admin.com"))
                 .thenReturn(admin);
 
@@ -90,6 +96,11 @@ public class UsuarioWebTest {
 
     @Test
     public void listadoUsuariosRegistradosDevuelvePaginaConUsuarios() throws Exception {
+        UsuarioData admin = new UsuarioData();
+        admin.setId(99L);
+        admin.setEmail("admin@umh.es");
+        admin.setAdmin(true);
+
         UsuarioData usuario1 = new UsuarioData();
         usuario1.setId(1L);
         usuario1.setEmail("richard@umh.es");
@@ -97,6 +108,12 @@ public class UsuarioWebTest {
         UsuarioData usuario2 = new UsuarioData();
         usuario2.setId(2L);
         usuario2.setEmail("ada@umh.es");
+
+        when(managerUserSession.usuarioLogeado())
+                .thenReturn(99L);
+
+        when(usuarioService.findById(99L))
+                .thenReturn(admin);
 
         when(usuarioService.allUsuarios())
                 .thenReturn(Arrays.asList(usuario1, usuario2));
@@ -113,11 +130,23 @@ public class UsuarioWebTest {
 
     @Test
     public void descripcionUsuarioDevuelvePaginaConDatosUsuarioSinPassword() throws Exception {
+        UsuarioData admin = new UsuarioData();
+        admin.setId(99L);
+        admin.setEmail("admin@umh.es");
+        admin.setNombre("Admin");
+        admin.setAdmin(true);
+
         UsuarioData usuario = new UsuarioData();
         usuario.setId(1L);
         usuario.setEmail("richard@umh.es");
         usuario.setNombre("Richard Stallman");
         usuario.setPassword("1234");
+
+        when(managerUserSession.usuarioLogeado())
+                .thenReturn(99L);
+
+        when(usuarioService.findById(99L))
+                .thenReturn(admin);
 
         when(usuarioService.findById(1L))
                 .thenReturn(usuario);
