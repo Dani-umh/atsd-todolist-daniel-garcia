@@ -35,10 +35,20 @@
                     <td th:text="${usuario.id}"></td>
                     <td th:text="${usuario.email}"></td>
                     <td>
-                        <a class="btn btn-primary btn-sm"
+                        <a class="btn btn-primary btn-sm mr-2"
                            th:href="@{/registered/{id}(id=${usuario.id})}">
                             View description
                         </a>
+
+                        <form method="post"
+                              th:action="@{/registered/{id}/toggle-enabled(id=${usuario.id})}"
+                              style="display: inline;">
+                            <button type="submit"
+                                    class="btn btn-warning btn-sm"
+                                    th:text="${usuario.enabled} ? 'Disable' : 'Enable'">
+                                Disable
+                            </button>
+                        </form>
                     </td>
                 </tr>
 
