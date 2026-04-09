@@ -49,7 +49,11 @@ public class LoginController {
 
             managerUserSession.logearUsuario(usuario.getId());
 
-            return "redirect:/usuarios/" + usuario.getId() + "/tareas";
+            if (usuario.isAdmin()) {
+                return "redirect:/registered";
+            } else {
+                return "redirect:/usuarios/" + usuario.getId() + "/tareas";
+            }
         } else if (loginStatus == UsuarioService.LoginStatus.USER_NOT_FOUND) {
             model.addAttribute("error", "No existe usuario");
             return "formLogin";
