@@ -76,6 +76,9 @@ public class LoginController {
         } else if (loginStatus == UsuarioService.LoginStatus.ERROR_PASSWORD) {
             model.addAttribute("error", "Contraseña incorrecta");
             return "formLogin";
+        } else if (loginStatus == UsuarioService.LoginStatus.USER_DISABLED) {
+            model.addAttribute("error", "Usuario deshabilitado");
+            return "formLogin";
         }
         return "formLogin";
     }
