@@ -59,6 +59,12 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
+    public boolean existeAdministrador() {
+        logger.debug("Comprobando si existe un usuario administrador");
+        return usuarioRepository.existsByAdminTrue();
+    }
+
+    @Transactional(readOnly = true)
     public UsuarioData findByEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
         if (usuario == null) return null;

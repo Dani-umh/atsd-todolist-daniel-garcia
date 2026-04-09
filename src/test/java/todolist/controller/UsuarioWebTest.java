@@ -48,6 +48,25 @@ public class UsuarioWebTest {
     }
 
     @Test
+    public void servicioLoginAdministradorRedirigeAListaUsuarios() throws Exception {
+        UsuarioData admin = new UsuarioData();
+        admin.setNombre("Admin");
+        admin.setId(1L);
+        admin.setAdmin(true);
+
+        when(usuarioService.login("admin@admin.com", "1234"))
+                .thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
+        when(usuarioService.findByEmail("admin@admin.com"))
+                .thenReturn(admin);
+
+        this.mockMvc.perform(post("/login")
+                        .param("eMail", "admin@admin.com")
+                        .param("password", "1234"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/registered"));
+    }
+
+    @Test
     public void servicioLoginUsuarioNotFound() throws Exception {
         when(usuarioService.login("pepito.perez@gmail.com", "12345678"))
                 .thenReturn(UsuarioService.LoginStatus.USER_NOT_FOUND);

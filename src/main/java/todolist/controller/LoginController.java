@@ -49,7 +49,11 @@ public class LoginController {
 
             managerUserSession.logearUsuario(usuario.getId());
 
-            return "redirect:/usuarios/" + usuario.getId() + "/tareas";
+            if (usuario.isAdmin()) {
+                return "redirect:/registered";
+            } else {
+                return "redirect:/usuarios/" + usuario.getId() + "/tareas";
+            }
         } else if (loginStatus == UsuarioService.LoginStatus.USER_NOT_FOUND) {
             model.addAttribute("error", "No existe usuario");
             return "formLogin";
@@ -63,19 +67,22 @@ public class LoginController {
     @GetMapping("/registro")
     public String registroForm(Model model) {
         model.addAttribute("registroData", new RegistroData());
+        model.addAttribute("existeAdministrador", usuarioService.existeAdministrador());
         return "formRegistro";
     }
 
-   @PostMapping("/registro")
-   public String registroSubmit(@Valid RegistroData registroData, BindingResult result, Model model) {
+    @PostMapping("/registro")
+    public String registroSubmit(@Valid RegistroData registroData, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
+            model.addAttribute("existeAdministrador", usuarioService.existeAdministrador());
             return "formRegistro";
         }
 
         if (usuarioService.findByEmail(registroData.getEmail()) != null) {
             model.addAttribute("registroData", registroData);
             model.addAttribute("error", "El usuario " + registroData.getEmail() + " ya existe");
+            model.addAttribute("existeAdministrador", usuarioService.existeAdministrador());
             return "formRegistro";
         }
 
@@ -84,10 +91,11 @@ public class LoginController {
         usuario.setPassword(registroData.getPassword());
         usuario.setFechaNacimiento(registroData.getFechaNacimiento());
         usuario.setNombre(registroData.getNombre());
+        usuario.setAdmin(registroData.isAdmin());
 
         usuarioService.registrar(usuario);
         return "redirect:/login";
-   }
+    }
 
    @GetMapping("/logout")
    public String logout(HttpSession session) {
