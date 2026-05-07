@@ -1,0 +1,16 @@
+name: Tests
+
+on: push
+
+jobs:
+  launch-tests:
+    runs-on: ubuntu-latest
+    container: openjdk:21-ea-1-jdk
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Launch tests with Maven
+        run: |
+          chmod +x ./mvnw
+          ./mvnw test
