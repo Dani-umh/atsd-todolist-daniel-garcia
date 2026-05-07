@@ -167,3 +167,5 @@ docker run --rm -p 8080:8080 daniumh/p2-todolistapp:1.1.0
 Main application URL:
 
 - http://localhost:8080/login
+
+Continuous integration test with GitHub Actions.
