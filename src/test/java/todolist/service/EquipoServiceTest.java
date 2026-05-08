@@ -1,0 +1,26 @@
+package todolist.service;
+
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import todolist.dto.EquipoData;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@SpringBootTest
+@Sql(scripts = "/clean-db.sql")
+public class EquipoServiceTest {
+
+    @Autowired
+    EquipoService equipoService;
+
+    @Test
+    public void crearRecuperarEquipo() {
+        EquipoData equipo = equipoService.crearEquipo("Project 1");
+        assertThat(equipo.getId()).isNotNull();
+
+        EquipoData equipoBd = equipoService.recuperarEquipo(equipo.getId());
+        assertThat(equipoBd).isNotNull();
+        assertThat(equipoBd.getNombre()).isEqualTo("Project 1");
+    }
+}
