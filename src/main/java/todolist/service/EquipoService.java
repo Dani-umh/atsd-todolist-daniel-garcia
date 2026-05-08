@@ -1,18 +1,17 @@
 package todolist.service;
 
-import todolist.dto.EquipoData;
-import todolist.model.Equipo;
-import todolist.repository.EquipoRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import todolist.dto.EquipoData;
 import todolist.dto.UsuarioData;
+import todolist.model.Equipo;
 import todolist.model.Usuario;
+import todolist.repository.EquipoRepository;
 import todolist.repository.UsuarioRepository;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,10 +22,10 @@ public class EquipoService {
     EquipoRepository equipoRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
+    UsuarioRepository usuarioRepository;
 
     @Autowired
-    UsuarioRepository usuarioRepository;
+    private ModelMapper modelMapper;
 
     @Transactional
     public EquipoData crearEquipo(String nombre) {
@@ -40,7 +39,7 @@ public class EquipoService {
         Equipo equipo = equipoRepository.findById(id).orElse(null);
 
         if (equipo == null) {
-            return null;
+            throw new EquipoServiceException("Equipo no encontrado");
         }
 
         return modelMapper.map(equipo, EquipoData.class);
@@ -57,13 +56,27 @@ public class EquipoService {
     @Transactional
     public void añadirUsuarioAEquipo(Long id, Long id1) {
         Equipo equipo = equipoRepository.findById(id).orElse(null);
+
+        if (equipo == null) {
+            throw new EquipoServiceException("Equipo no encontrado");
+        }
+
         Usuario usuario = usuarioRepository.findById(id1).orElse(null);
+
+        if (usuario == null) {
+            throw new EquipoServiceException("Usuario no encontrado");
+        }
+
         equipo.addUsuario(usuario);
     }
 
     @Transactional(readOnly = true)
     public List<UsuarioData> usuariosEquipo(Long id) {
         Equipo equipo = equipoRepository.findById(id).orElse(null);
+
+        if (equipo == null) {
+            throw new EquipoServiceException("Equipo no encontrado");
+        }
 
         return equipo.getUsuarios().stream()
                 .map(usuario -> modelMapper.map(usuario, UsuarioData.class))
@@ -73,6 +86,10 @@ public class EquipoService {
     @Transactional(readOnly = true)
     public List<EquipoData> equiposUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
+
+        if (usuario == null) {
+            throw new EquipoServiceException("Usuario no encontrado");
+        }
 
         return usuario.getEquipos().stream()
                 .map(equipo -> modelMapper.map(equipo, EquipoData.class))
