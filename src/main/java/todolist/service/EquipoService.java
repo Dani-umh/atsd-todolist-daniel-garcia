@@ -10,6 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import todolist.dto.UsuarioData;
+import todolist.model.Usuario;
+import todolist.repository.UsuarioRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EquipoService {
@@ -19,6 +24,9 @@ public class EquipoService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    UsuarioRepository usuarioRepository;
 
     @Transactional
     public EquipoData crearEquipo(String nombre) {
@@ -43,6 +51,22 @@ public class EquipoService {
         return equipoRepository.findAll().stream()
                 .sorted(Comparator.comparing(Equipo::getNombre))
                 .map(equipo -> modelMapper.map(equipo, EquipoData.class))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void añadirUsuarioAEquipo(Long id, Long id1) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        Usuario usuario = usuarioRepository.findById(id1).orElse(null);
+        equipo.addUsuario(usuario);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UsuarioData> usuariosEquipo(Long id) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+
+        return equipo.getUsuarios().stream()
+                .map(usuario -> modelMapper.map(usuario, UsuarioData.class))
                 .collect(Collectors.toList());
     }
 }
