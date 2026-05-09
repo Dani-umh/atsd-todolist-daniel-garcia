@@ -1,7 +1,9 @@
 package todolist.service;
 
+import todolist.model.Equipo;
 import todolist.model.Tarea;
 import todolist.model.Usuario;
+import todolist.repository.EquipoRepository;
 import todolist.repository.TareaRepository;
 import todolist.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,17 +13,18 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 
 @Service
-// Se ejecuta solo si el perfil activo es 'dev'
 @Profile("dev")
 public class InitDbService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
     @Autowired
     private TareaRepository tareaRepository;
 
-    // Se ejecuta tras crear el contexto de la aplicación
-    // para inicializar la base de datos
+    @Autowired
+    private EquipoRepository equipoRepository;
+
     @PostConstruct
     public void initDatabase() {
         Usuario usuario = new Usuario("richard@umh.es");
@@ -34,6 +37,13 @@ public class InitDbService {
 
         Tarea tarea2 = new Tarea(usuario, "Buy milk, cereals and coffee");
         tareaRepository.save(tarea2);
-    }
 
+        Equipo equipo1 = new Equipo("Project AAA");
+        equipo1.addUsuario(usuario);
+        equipoRepository.save(equipo1);
+
+        Equipo equipo2 = new Equipo("Project BBB");
+        equipo2.addUsuario(usuario);
+        equipoRepository.save(equipo2);
+    }
 }
