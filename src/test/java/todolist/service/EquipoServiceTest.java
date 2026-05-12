@@ -73,6 +73,28 @@ public class EquipoServiceTest {
     }
 
     @Test
+    public void eliminarUsuarioDeEquipoTest() {
+        // GIVEN
+        // Un usuario añadido a un equipo
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@umh");
+        usuario.setPassword("1234");
+        usuario = usuarioService.registrar(usuario);
+
+        EquipoData equipo = equipoService.crearEquipo("Project 1");
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+
+        // WHEN
+        // Eliminamos el usuario del equipo
+        equipoService.eliminarUsuarioDeEquipo(equipo.getId(), usuario.getId());
+
+        // THEN
+        // El usuario ya no pertenece al equipo
+        List<UsuarioData> usuarios = equipoService.usuariosEquipo(equipo.getId());
+        assertThat(usuarios).hasSize(0);
+    }
+
+    @Test
     public void recuperarEquiposDeUsuario() {
         // GIVEN
         // Un usuario y dos equipos en la base de datos

@@ -50,6 +50,11 @@ public class Equipo implements Serializable {
         usuario.getEquipos().add(this);
     }
 
+    public void removeUsuario(Usuario usuario) {
+        this.getUsuarios().remove(usuario);
+        usuario.getEquipos().remove(this);
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
