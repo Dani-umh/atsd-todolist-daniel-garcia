@@ -95,6 +95,28 @@ public class EquipoServiceTest {
     }
 
     @Test
+    public void eliminarUsuarioNoPerteneceAEquipoTest() {
+
+        // GIVEN
+        // Usuario y equipo sin relación
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@umh");
+        usuario.setPassword("1234");
+        usuario = usuarioService.registrar(usuario);
+
+        EquipoData equipo = equipoService.crearEquipo("Project 1");
+
+        Long equipoId = equipo.getId();
+        Long usuarioId = usuario.getId();
+
+        // THEN
+        // Se lanza excepción al intentar eliminar
+        assertThatThrownBy(() ->
+                equipoService.eliminarUsuarioDeEquipo(equipoId, usuarioId))
+                .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
     public void recuperarEquiposDeUsuario() {
         // GIVEN
         // Un usuario y dos equipos en la base de datos

@@ -84,6 +84,10 @@ public class EquipoService {
             throw new EquipoServiceException("Usuario no encontrado");
         }
 
+        if (!equipo.getUsuarios().contains(usuario)) {
+            throw new EquipoServiceException("El usuario no pertenece al equipo");
+        }
+
         equipo.removeUsuario(usuario);
     }
 
