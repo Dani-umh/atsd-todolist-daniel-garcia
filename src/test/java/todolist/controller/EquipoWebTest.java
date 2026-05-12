@@ -18,6 +18,10 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.not;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -72,6 +76,50 @@ public class EquipoWebTest {
                 .andExpect(content().string(allOf(
                         containsString("Miembros del equipo Project AAA"),
                         containsString("richard@umh.es")
+                )));
+    }
+
+    @Test
+    public void unirseEquipo() throws Exception {
+
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("richard@umh.es");
+        usuario.setPassword("1234");
+        usuario = usuarioService.registrar(usuario);
+
+        EquipoData equipo = equipoService.crearEquipo("Project AAA");
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
+        this.mockMvc.perform(post("/equipos/" + equipo.getId() + "/unirse"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/equipos"));
+
+        this.mockMvc.perform(get("/equipos/" + equipo.getId()))
+                .andExpect(content().string(containsString("richard@umh.es")));
+    }
+
+    @Test
+    public void salirEquipo() throws Exception {
+
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("richard@umh.es");
+        usuario.setPassword("1234");
+        usuario = usuarioService.registrar(usuario);
+
+        EquipoData equipo = equipoService.crearEquipo("Project AAA");
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
+        this.mockMvc.perform(post("/equipos/" + equipo.getId() + "/salir"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/equipos"));
+
+        this.mockMvc.perform(get("/equipos/" + equipo.getId()))
+                .andExpect(content().string(allOf(
+                        containsString("Miembros del equipo Project AAA"),
+                        not(containsString("richard@umh.es"))
                 )));
     }
 }
