@@ -21,6 +21,7 @@
         <tr>
           <th>Id</th>
           <th>Equipo</th>
+          <th>Acción</th>
         </tr>
         </thead>
         <tbody>
@@ -30,6 +31,19 @@
             <a th:href="@{/equipos/{id}(id=${equipo.id})}"
                th:text="${equipo.nombre}">
             </a>
+          </td>
+          <td>
+            <form th:if="${!equiposUsuario.contains(equipo)}"
+                  th:action="@{/equipos/{id}/unirse(id=${equipo.id})}"
+                  method="post">
+              <button type="submit" class="btn btn-primary btn-xs">unirse</button>
+            </form>
+
+            <form th:if="${equiposUsuario.contains(equipo)}"
+                  th:action="@{/equipos/{id}/salir(id=${equipo.id})}"
+                  method="post">
+              <button type="submit" class="btn btn-danger btn-xs">salir</button>
+            </form>
           </td>
         </tr>
         </tbody>
