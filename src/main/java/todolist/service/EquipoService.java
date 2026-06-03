@@ -29,7 +29,12 @@ public class EquipoService {
 
     @Transactional
     public EquipoData crearEquipo(String nombre) {
-        Equipo equipo = new Equipo(nombre);
+        return crearEquipo(nombre, "");
+    }
+
+    @Transactional
+    public EquipoData crearEquipo(String nombre, String descripcion) {
+        Equipo equipo = new Equipo(nombre, descripcion);
         equipoRepository.save(equipo);
         return modelMapper.map(equipo, EquipoData.class);
     }

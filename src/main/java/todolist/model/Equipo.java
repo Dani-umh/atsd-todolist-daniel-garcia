@@ -20,6 +20,9 @@ public class Equipo implements Serializable {
     @NotNull
     private String nombre;
 
+    @NotNull
+    private String descripcion;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "equipo_usuario",
             joinColumns = {@JoinColumn(name = "fk_equipo")},
@@ -29,8 +32,14 @@ public class Equipo implements Serializable {
     public Equipo() {
     }
 
+    public Equipo(String nombre, String descripcion) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+    }
+
     public Equipo(String nombre) {
         this.nombre = nombre;
+        this.descripcion = "";
     }
 
     public Long getId() {
@@ -39,6 +48,10 @@ public class Equipo implements Serializable {
 
     public String getNombre() {
         return nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
     }
 
     public Set<Usuario> getUsuarios() {
@@ -57,6 +70,10 @@ public class Equipo implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     @Override
