@@ -21,6 +21,7 @@
         <tr>
           <th>Id</th>
           <th>Equipo</th>
+          <th>Descripción</th>
           <th>Acción</th>
         </tr>
         </thead>
@@ -32,6 +33,7 @@
                th:text="${equipo.nombre}">
             </a>
           </td>
+          <td th:text="${equipo.descripcion}"></td>
           <td>
             <form th:if="${!equiposUsuario.contains(equipo)}"
                   th:action="@{/equipos/{id}/unirse(id=${equipo.id})}"
